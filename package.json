@@ -1,0 +1,37 @@
+{
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "bs": "run-s build start",
+    "build": "npm-run-all -s clean build:server build:client -p copy:server copy:client",
+    "build:client": "yarn workspace client build",
+    "build:server": "yarn workspace server build",
+    "clean": "rimraf build",
+    "clean:nodemod": "npm-run-all -p clean:nodemod:client clean:nodemod:server -s clean:nodemod:project",
+    "clean:nodemod:project": "npx rimraf node_modules",
+    "clean:nodemod:client": "rimraf client/node_modules",
+    "clean:nodemod:server": "rimraf server/node_modules",
+    "copy:client": "copyfiles -u 2 \"client/build/**/*\" build/client",
+    "copy:server": "copyfiles -u 3 \"server/build/src/**/*\" build",
+    "dev": "run-p dev:client dev:server",
+    "dev:client": "yarn workspace client start",
+    "dev:server": "yarn workspace server dev",
+    "start": "node build/server.js",
+    "test:client": "yarn workspace client test",
+    "test:server": "yarn workspace server test"
+  },
+  "devDependencies": {
+    "copyfiles": "^2.3.0",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^3.0.2",
+    "serve": "^11.3.2"
+  },
+  "engines": {
+    "node": "12.x",
+    "npm": "6.x",
+    "yarn": "1.x"
+  }
+}
