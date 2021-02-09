@@ -3,6 +3,7 @@ import { Game, GameModel } from './models/game';
 import { Stock, StockModel } from './models/stocks/stock';
 import { StocksGamePlayer, StocksGamePlayerModel } from './models/stocks/stocks-game-player';
 import { User, UserModel } from './models/user';
+import { UserCredential, UserCredentialModel } from './models/user-credential';
 
 declare interface IModels {
   Game: GameModel;
@@ -10,6 +11,7 @@ declare interface IModels {
   Stock: StockModel;
   StocksGamePlayer: StocksGamePlayerModel;
   User: UserModel;
+  UserCredential: UserCredentialModel;
 }
 
 class DB {
@@ -30,6 +32,7 @@ class DB {
       // LedgerEntry: new LedgerEntry().model,
       StocksGamePlayer: new StocksGamePlayer().model,
       User: new User().model,
+      UserCredential: new UserCredential().model,
       // this is where we initialise all models
     };
   }
