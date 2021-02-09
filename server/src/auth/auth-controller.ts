@@ -27,26 +27,18 @@ class AuthController implements Controller {
       if (!user) {
         next(new HttpException(401, `Invalid email or password`));
       }
-      throw new Error('Implement auth!');
+      const userCredential = await DB.Models.UserCredential.findOne({ userId: user._id });
+      if (!userCredential || !userCredential.password) {
+        next(new HttpException(401, `Invalid email or password`));
+      } else {
+        // Verify password matches existing hash
+        const passwordMatches = await userCredential.passwordIsValid(password);
+        if (!passwordMatches) {
+          next(new HttpException(401, `Invalid email or password`));
+        }
+      }
 
-      // if (!user.password) {
-      //   // allow user to set password when none has been assigned
-      //   // Since this is a single-user app, this is a cheap way to reset a password via clearing the field in the DB
-      //   user.password = password;
-      //   await user.save();
-      // } else {
-      //   // Verify password matches existing hash
-      //   const passwordMatches = await user.passwordIsValid(password);
-      //   if (!passwordMatches) {
-      //     next(new HttpException(401, `Invalid email or password`));
-      //   }
-      // }
-
-      const tokenData = this.createToken(user);
-      response.setHeader('Set-Cookie', [this.createCookie(tokenData)]);
-      response.status(200).json({
-        name: user.name,
-      });
+      this.setLoggedIn(user, response);
       return;
     } catch (err) {
       next(err);
@@ -57,6 +49,14 @@ class AuthController implements Controller {
     response.setHeader('Set-Cookie', ['Authorization=;Max-age=0; Path=/']);
     response.send(200);
   };
+
+  private setLoggedIn(user: IUser, response: Response) {
+    const tokenData = this.createToken(user);
+    response.setHeader('Set-Cookie', [this.createCookie(tokenData)]);
+    response.status(200).json({
+      name: user.name,
+    });
+  }
 
   private createCookie(tokenData: AuthToken) {
     return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn}; Path=/`;
