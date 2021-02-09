@@ -6,6 +6,7 @@ import Controller from '../interfaces/controller';
 import { AuthToken, AuthTokenData } from '../interfaces/token-data';
 import LoginModel from './login-model';
 import { IUser } from '../database/models/user';
+import RegisterModel from './register-model';
 
 class AuthController implements Controller {
   public path = '/api/auth';
@@ -18,6 +19,7 @@ class AuthController implements Controller {
   private initializeRoutes = () => {
     this.router.post(`${this.path}/login`, this.postLogin);
     this.router.post(`${this.path}/logout`, this.postLogout);
+    this.router.post(`${this.path}/register`, this.postRegister);
   };
 
   private postLogin = async (request: Request, response: Response, next: NextFunction) => {
@@ -45,9 +47,29 @@ class AuthController implements Controller {
     }
   };
 
-  private postLogout = (request: Request, response: Response) => {
+  private postLogout = (_request: Request, response: Response) => {
     response.setHeader('Set-Cookie', ['Authorization=;Max-age=0; Path=/']);
     response.send(200);
+  };
+
+  private postRegister = async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const { name, email, password } = request.body as RegisterModel;
+      let user = await DB.Models.User.findOne({ email });
+      if (user) {
+        next(new HttpException(403, `An account already exists for that email`));
+      }
+
+      user = new DB.Models.User({ name, email });
+      await user.save();
+      const credential = new DB.Models.UserCredential({ userId: user._id, password });
+      await credential.save();
+
+      this.setLoggedIn(user, response);
+      return;
+    } catch (err) {
+      next(err);
+    }
   };
 
   private setLoggedIn(user: IUser, response: Response) {
