@@ -5,6 +5,7 @@ import Login from './components/auth/Login';
 import PrivateRoute from './components/auth/PrivateRoute';
 import { loadUser, IUser, saveUser, UserContext } from './components/auth/userContext';
 import { AppShell } from './components/common/AppShell';
+import { Home } from './pages/Home';
 
 function App() {
   const [user, setUser] = React.useState(loadUser());
@@ -21,9 +22,14 @@ function App() {
           <Route path="/login">
             <Login />
           </Route>
-          <PrivateRoute path="/">
+          <Route path="/">
+            <AppShell>
+              <Home />
+            </AppShell>
+          </Route>
+          {/* <PrivateRoute path="/">
             <AppShell>Home</AppShell>
-          </PrivateRoute>
+          </PrivateRoute> */}
         </Switch>
       </UserContext.Provider>
     </Router>

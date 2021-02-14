@@ -1,5 +1,15 @@
 import * as React from 'react';
+import { MainHeader } from './MainHeader';
 
-export const AppShell: React.FC = ({ children }) => {
-  return <div>{children}</div>;
+interface AppShellProps {
+  children?: React.ReactNode;
+}
+
+export const AppShell: React.FC<AppShellProps> = ({ children }) => {
+  return (
+    <>
+      <MainHeader />
+      {children}
+    </>
+  );
 };
