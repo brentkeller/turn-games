@@ -7,14 +7,18 @@ interface TextFieldProps {
   value: string;
   onChange(newValue: string): void;
   errorMessage?: string;
+  inputClasses?: string;
   label?: string;
+  maxLength?: number;
   placeholder?: string;
 }
 
 export const TextField: React.FC<TextFieldProps> = ({
   errorMessage,
   id,
+  inputClasses,
   label,
+  maxLength,
   name,
   placeholder,
   type,
@@ -65,7 +69,8 @@ export const TextField: React.FC<TextFieldProps> = ({
           placeholder={placeholder}
           value={textValue}
           onChange={changeValue}
-          className="text-sm sm:text-base relative w-full border rounded placeholder-gray-400 focus:border-indigo-400 focus:outline-none py-2 pr-2 pl-2"
+          maxLength={maxLength}
+          className={`text-sm sm:text-base relative w-full border rounded placeholder-gray-400 focus:border-indigo-400 focus:outline-none py-2 pr-2 pl-2 ${inputClasses}`}
         />
         {errorMessage !== undefined && (
           <span className="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
